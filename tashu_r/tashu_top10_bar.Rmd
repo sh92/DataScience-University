@@ -1,0 +1,67 @@
+---
+title: "tashue"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+if (!require("ggplot2")){
+  install.packages("ggplot2")
+}
+library(ggplot2)
+install.packages("extrafont")
+library(extrafont) 
+font_import() 
+cairo_pdf("Rplot_font_adjust.pdf", family= "AppleGothic")
+```
+
+```{r data preprocessing}
+table_tashu <- read.table("tashu.csv", header=T,sep=",")
+table_station <- read.table("station.csv",header=T, sep=",")
+rent <- as.data.frame(table_tashu$RENT_STATION)
+ret <- as.data.frame(table_tashu$RETURN_STATION)
+data <- Map(c, rent, ret)
+tbl_data <- table(data)
+freq <- as.data.frame(tbl_data)
+sorted_freq <- freq[order(freq$Freq, decreasing = TRUE),]
+top10 <-sorted_freq[c(1:10),c(1:2)]
+tbl_top10 <- tbl_data[top10$data]
+```
+
+```{r stationName}
+
+station_list <- list(num=table_station$번호)
+names(station_list$num) <- table_station$위치
+names_station <- names(station_list$num)
+names_station[56] <- "충대정문맞은편"
+names_station[17] <- "타임월드서문"
+names_station[31] <- "유성구청맞은편" 
+names_station[32] <- "홈플러스(유성점)"
+names_station[33] <- "월평이마트"
+names_station[14] <- "둔산하이마트"
+names_station[105] <- "카이스트서쪽"
+names_station[21] <- "카이스트학식"
+names_station[55] <- "충대정문앞"
+```
+```{r Barplot}
+ colors = c("red", "yellow", "green", "violet", "orange", "blue", "pink", "cyan","black","white") 
+par(family="AppleGothic",font = 1, font.lab = 2, font.axis = 2)
+barplot(tbl_top10,names.arg=c(top10[1]$data),xlab="Station", ylab="Number of station", col=colors, main="Top 10 Number of Station", border="red", ylim=c(0,400000) ,legend=names_station[c(top10[1]$data)], args.legend = list(x ='topright', bty='n', inset=c(0,0)))
+
+```
+
+
+```{r ggplot2}
+dat <- data.frame(tbl_top10)
+dat$station <- as.character(dat$data)
+dat$number <- dat$Freq
+top10_name <- names_station[as.integer(dat$station)]
+dat$station_name <- top10_name
+
+  
+ggplot(data=dat, aes(x=station, y=number, fill=station_name)) + geom_bar(stat="identity")+ ggtitle("Bar graph of top 10 station")+ xlab('station')+ ylab('number')+theme(text=element_text(family="AppleGothic"))
+
+```
+
+

@@ -1,0 +1,48 @@
+---
+title: "ggmap_tashu"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+tbl_tashu <- read.table("tashu.csv", header=T,sep=",")
+tbl_station <- read.table("station.csv",header=T, sep=",")
+```
+```{r preprocessing}
+
+rent_t <- tbl_tashu$RENT_STATION
+return_t <- tbl_tashu$RETURN_STATION
+
+rent <- as.data.frame(rent_t)
+ret <- as.data.frame(return_t)
+data <- Map(c, rent, ret)
+tbl_data <- table(data)
+```
+
+```{r ggmap}
+library("ggmap")
+daejon_gc <- geocode('Daejon', source='google')
+daejon_cent <- as.numeric(daejon_gc)
+list_location <- as.character(tbl_station$좌표)
+
+y <- as.numeric(unlist(strsplit(list_location,",")))
+even <- function(x) x%%2 == 0 
+odd <- function(x) x%%2 != 0 
+
+
+tbl_station$lon  <-y[even(1:length(y))]
+tbl_station$lat  <-y[odd(1:length(y))]
+
+tbl_data_exist<- tbl_data[1:144]
+freq <- as.data.frame(tbl_data)
+number_st <- freq$Freq[1:144]
+
+tbl_station$freq <- number_st
+
+circle_scale_amt <- 1/50000
+tashu_station_latlon <- subset(tbl_station, select=c("번호","lon","lat","freq"))
+ggmap(get_googlemap(center=daejon_cent, scale = 1,maptype = "roadmap",zoom=12)) + geom_point(aes(x = lon, y = lat), size=number_st*circle_scale_amt, colour = "red", data = tashu_station_latlon,alpha=0.7)+scale_size_continuous(range=range(number_st))
+
+
+```
+

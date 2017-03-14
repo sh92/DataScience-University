@@ -1,0 +1,37 @@
+---
+title: "top20_rent_rtn"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+tbl_tashu <- read.table("tashu.csv", header=T,sep=",")
+tbl_station <- read.table("station.csv",header=T, sep=",")
+```
+```{r preprocessing}
+rent_t <- tbl_tashu$RENT_STATION
+return_t <- tbl_tashu$RETURN_STATION
+tbl_rent <- table(tbl_tashu$RENT_STATION)
+tbl_rtn <- table(tbl_tashu$RETURN_STATION)
+
+f <- tbl_tashu %>% group_by(as.integer(tbl_tashu$RENT_STATION), as.integer(tbl_tashu$RETURN_STATION)) %>% summarize(Count = n())  %>% arrange(desc(Count))
+
+
+freq20 <- f[c(1:20),c(1:3)]
+freq20 <- freq20 %>% arrange(desc(`as.integer(tbl_tashu$RENT_STATION)`))
+
+
+freq20$`as.integer(tbl_tashu$RENT_STATION)`
+freq20$rent <- freq20$`as.integer(tbl_tashu$RENT_STATION)`
+freq20$rtn <- freq20$`as.integer(tbl_tashu$RETURN_STATION)`
+freq20$rent <- as.character(freq20$rent)
+freq20$rtn <- as.character(freq20$rtn)
+```
+```{r ggplot}
+p <- ggplot(freq20, aes(freq20$rent , freq20$rtn))
+p + geom_point(aes(size = freq20$Count)) + xlab("Number Of Rent Station") + ylab("Number Of Return Station") + ggtitle("Station")+labs(size="Count")
+```
+
+
