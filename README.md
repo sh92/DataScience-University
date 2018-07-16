@@ -1,2 +1,2 @@
 # DataScience
-DataScience Project
+This is a DataScience Project in my Datascience course
