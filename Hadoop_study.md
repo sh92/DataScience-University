@@ -33,3 +33,16 @@
 * ex) If you want to skip patterns when wordcount is executed, 
     * hadoop fs -put patterns.txt  /
     * hadoop jar (jar file) (Wordcount class file) -Dwordcount.case.sensitive=true (input) (output) -skip /patterns.txt
+    
+    
+## Hive Commands example
+
+* create table tashu (RENT_STATION int, RENT_DATE string, RETURN_STATION int, RETURN_DATE string) row format delimited fields terminated by ‘,’;
+
+* load data local inpath '/root/soft/apache/hadoop/hadoop/data/tashu.csv' overwrite into table tashu;
+
+* select word, count(*) from tashu LATERAL VIEW explode(split(substr(rent_date, 1,4), ‘ ‘)) lTable as word groupy by word;
+
+* select cast(word as int), count(*) from tashu view explode(split(substr(rent_date,7,2), ‘ ‘) lTable as word group by word;
+
+select cast(word as int), count(*) from tashu view explode(split(substr(rent_date,9,2), ‘ ‘) lTable as word group by word;
