@@ -37,12 +37,18 @@
     
 ## Hive Commands example
 
-* create table tashu (RENT_STATION int, RENT_DATE string, RETURN_STATION int, RETURN_DATE string) row format delimited fields terminated by ‘,’;
-
-* load data local inpath '/root/soft/apache/hadoop/hadoop/data/tashu.csv' overwrite into table tashu;
-
-* select word, count(*) from tashu LATERAL VIEW explode(split(substr(rent_date, 1,4), ‘ ‘)) lTable as word groupy by word;
-
-* select cast(word as int), count(*) from tashu view explode(split(substr(rent_date,7,2), ‘ ‘) lTable as word group by word;
-
+```
+create table tashu (RENT_STATION int, RENT_DATE string, RETURN_STATION int, RETURN_DATE string) row format delimited fields terminated by ‘,’;
+```
+```
+load data local inpath '/root/soft/apache/hadoop/hadoop/data/tashu.csv' overwrite into table tashu;
+```
+```
+select word, count(*) from tashu LATERAL VIEW explode(split(substr(rent_date, 1,4), ‘ ‘)) lTable as word groupy by word;
+```
+```
+select cast(word as int), count(*) from tashu view explode(split(substr(rent_date,7,2), ‘ ‘) lTable as word group by word;
+```
+```
 select cast(word as int), count(*) from tashu view explode(split(substr(rent_date,9,2), ‘ ‘) lTable as word group by word;
+```
